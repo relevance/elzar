@@ -1,0 +1,5 @@
+#!/bin/bash
+
+PROJECT_DIR=$(dirname "$0")/..
+
+bundle exec knife cookbook create --config "${PROJECT_DIR}/.chef/knife.rb" --cookbook-path "${PROJECT_DIR}/site-cookbooks" --readme-format md "$@"
