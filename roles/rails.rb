@@ -1,4 +1,4 @@
 name        "rails"
 description "rails application and web server"
-run_list(
+run_list( 'nginx'
 )
