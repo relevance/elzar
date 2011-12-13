@@ -1,5 +1,6 @@
 #!/bin/bash
 
 PROJECT_DIR=$(dirname "$0")/..
+BRANCH=$(git branch | grep "^*" | cut -d" " -f2 | head -1)
 
-bundle exec knife cookbook github install --config "${PROJECT_DIR}/.chef/knife.rb" --cookbook-path "${PROJECT_DIR}/cookbooks" "$@"
+bundle exec knife cookbook github install --config "${PROJECT_DIR}/.chef/knife.rb" --branch $BRANCH --cookbook-path "${PROJECT_DIR}/cookbooks" "$@"
