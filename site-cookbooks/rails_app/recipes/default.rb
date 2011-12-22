@@ -7,6 +7,10 @@
 # All rights reserved - Do Not Redistribute
 #
 
+group 'deploy' do
+  append true
+end
+
 user "deploy" do
   shell "/bin/bash"
   action :create
