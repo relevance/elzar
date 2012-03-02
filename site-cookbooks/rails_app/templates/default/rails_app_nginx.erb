@@ -1,10 +1,10 @@
 server {
   listen 80 default_server;
   server_name 172.25.5.5;
-  root /var/www/apps/elzar-test/current/public;
+  root /var/www/apps/<%= node[:rails_app][:name]%>/current/public;
   client_max_body_size 100m;
 
   passenger_min_instances 3;
   passenger_enabled on;
-  rails_env production;
+  rails_env <%= node[:rails_app][:rails_env] %>;
 }

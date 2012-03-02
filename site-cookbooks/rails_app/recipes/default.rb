@@ -25,13 +25,13 @@ end
 directory "/home/deploy" do
   owner 'deploy'
   group 'deploy'
-  mode 0755
+  mode '0755'
 end
 
 directory "/home/deploy/.ssh" do
   owner 'deploy'
   group 'deploy'
-  mode 0755
+  mode '0755'
 end
 
 file "/home/deploy/.ssh/authorized_keys" do
@@ -39,37 +39,33 @@ file "/home/deploy/.ssh/authorized_keys" do
   content all_authorized_keys.map {|path| File.read(path)}.join
   owner 'deploy'
   group 'deploy'
-  mode 0600
+  mode '0600'
 end
 
 directory "/var/www/apps/" do
   recursive true
   owner 'deploy'
   group 'deploy'
-  mode 02775
+  mode '2775'
 end
 
 file "/home/deploy/.bashrc" do
   content "export PATH=#{node[:ruby_enterprise][:install_path]}/bin:$PATH"
   owner 'deploy'
   group 'deploy'
-  mode 0700
+  mode '0700'
 end
 
 file "/home/deploy/.bash_profile" do
   content 'source "$HOME/.bashrc"'
   owner 'deploy'
   group 'deploy'
-  mode 0700
+  mode '0700'
 end
 
-template "#{node[:nginx][:dir]}/sites-available/elzar_test" do
+template "#{node[:nginx][:dir]}/sites-enabled/#{node[:rails_app][:name]}" do
   source "rails_app_nginx.erb"
-  mode 0440
+  mode "0440"
   owner "root"
   group "root"
-end
-
-nginx_site "elzar_test" do
-  enable true
 end
