@@ -3,14 +3,6 @@ Description
 
 Installs nginx from package OR source code and sets up configuration handling similar to Debian's Apache2 scripts.
 
-Changes
-=======
-
-## v0.99.2:
-
-* [COOK-809] - attribute to disable access logging
-* [COOK-772] - update nginx download source location
-
 Requirements
 ============
 
