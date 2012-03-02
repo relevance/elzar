@@ -68,4 +68,5 @@ template "#{node[:nginx][:dir]}/sites-enabled/#{node[:rails_app][:name]}" do
   mode "0440"
   owner "root"
   group "root"
+  notifies :reload, resources(:service => "nginx"), :immediately
 end
