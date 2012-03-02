@@ -70,3 +70,9 @@ template "#{node[:nginx][:dir]}/sites-enabled/#{node[:rails_app][:name]}" do
   group "root"
   notifies :reload, resources(:service => "nginx"), :immediately
 end
+
+gem_package "mysql"
+mysql_database "#{node[:rails_app][:name]}_#{node[:rails_app][:rails_env]}" do
+  connection({:host => 'localhost', :username => 'root', :password => node['mysql']['server_root_password']})
+  action :create
+end
