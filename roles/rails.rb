@@ -15,6 +15,9 @@ override_attributes(:mysql => {
                     :ruby_enterprise => {
                       :version => '1.8.7-2012.02',
                       :url => "http://rubyenterpriseedition.googlecode.com/files/ruby-enterprise-1.8.7-2012.02"
+                    },
+                    :rails_app => {
+                      :name => 'elzar_test'
                     })
 run_list(
          'apt',
