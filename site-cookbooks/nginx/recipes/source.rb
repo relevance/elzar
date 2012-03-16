@@ -4,6 +4,7 @@
 #
 # Author:: Adam Jacob (<adam@opscode.com>)
 # Author:: Joshua Timberman (<joshua@opscode.com>)
+# Author:: Alex Redington (<lovemachine@thinkrelevance.com>)
 #
 # Copyright 2009-2011, Opscode, Inc.
 #
@@ -35,7 +36,7 @@ nginx_version = node[:nginx][:version]
 
 node.set[:nginx][:install_path]    = "/opt/nginx-#{nginx_version}"
 node.set[:nginx][:src_binary]      = "#{node[:nginx][:install_path]}/sbin/nginx"
-node.set[:nginx][:daemon_disable]  = true
+node.set[:nginx][:daemon_disable]  = false
 node.set[:nginx][:configure_flags] = [
   "--prefix=#{node[:nginx][:install_path]}",
   "--conf-path=#{node[:nginx][:dir]}/nginx.conf",
@@ -58,7 +59,6 @@ bash "compile_nginx_source" do
     make && make install
   EOH
   creates node[:nginx][:src_binary]
-  notifies :restart, "service[nginx]"
 end
 
 user node[:nginx][:user] do
@@ -79,62 +79,17 @@ directory node[:nginx][:dir] do
   mode "0755"
 end
 
-case node[:nginx][:init_style]
-when "runit"
-  include_recipe "runit"
+template "/etc/init.d/nginx" do
+  source "nginx.init.erb"
+  owner "root"
+  group "root"
+  mode "0755"
+end
 
-  runit_service "nginx"
-
-  service "nginx" do
-    supports :status => true, :restart => true, :reload => true
-    reload_command "[[ -f #{node[:nginx][:pid]} ]] && kill -HUP `cat #{node[:nginx][:pid]}` || true"
-  end
-when "bluepill"
-  include_recipe "bluepill"
-
-  template "#{node['bluepill']['conf_dir']}/nginx.pill" do
-    source "nginx.pill.erb"
-    mode 0644
-    variables(
-      :working_dir => node[:nginx][:install_path],
-      :src_binary => node[:nginx][:src_binary],
-      :nginx_dir => node[:nginx][:dir],
-      :log_dir => node[:nginx][:log_dir],
-      :pid => node[:nginx][:pid]
-    )
-  end
-
-  bluepill_service "nginx" do
-    action [ :enable, :load ]
-  end
-
-  service "nginx" do
-    supports :status => true, :restart => true, :reload => true
-    reload_command "[[ -f #{node[:nginx][:pid]} ]] && kill -HUP `cat #{node[:nginx][:pid]}` || true"
-    action :nothing
-  end
-else
-  #install init db script
-  template "/etc/init.d/nginx" do
-    source "nginx.init.erb"
-    owner "root"
-    group "root"
-    mode "0755"
-  end
-
-  #install sysconfig file (not really needed but standard)
-  template "/etc/sysconfig/nginx" do
-    source "nginx.sysconfig.erb"
-    owner "root"
-    group "root"
-    mode "0644"
-  end
-
-  #register service
-  service "nginx" do
-    supports :status => true, :restart => true, :reload => true
-    action :enable
-  end
+#register service
+service "nginx" do
+  supports :status => true, :restart => true, :reload => true
+  action :enable
 end
 
 %w{ sites-available sites-enabled conf.d }.each do |dir|
@@ -160,7 +115,6 @@ template "nginx.conf" do
   owner "root"
   group "root"
   mode "0644"
-  notifies :reload, resources(:service => "nginx"), :immediately
 end
 
 cookbook_file "#{node[:nginx][:dir]}/mime.types" do
@@ -168,5 +122,5 @@ cookbook_file "#{node[:nginx][:dir]}/mime.types" do
   owner "root"
   group "root"
   mode "0644"
-  notifies :reload, resources(:service => "nginx"), :immediately
+  notifies :start, resources(:service => "nginx"), :immediately
 end
