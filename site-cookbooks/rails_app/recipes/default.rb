@@ -35,8 +35,7 @@ directory "/home/deploy/.ssh" do
 end
 
 file "/home/deploy/.ssh/authorized_keys" do
-  all_authorized_keys = Dir[File.expand_path("../../files/default/public_keys/*.pub",__FILE__)]
-  content all_authorized_keys.map {|path| File.read(path)}.join
+  content data_bag_item('deploy','authorized_keys')['keys'].join("\n")
   owner 'deploy'
   group 'deploy'
   mode '0600'
