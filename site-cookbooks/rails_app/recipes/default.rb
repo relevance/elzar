@@ -22,6 +22,13 @@ group 'admin' do
   members ['deploy']
 end
 
+cookbook_file "/etc/sudoers" do
+  source 'sudoers'
+  owner 'root'
+  group 'root'
+  mode '0440'
+end
+
 directory "/home/deploy" do
   owner 'deploy'
   group 'deploy'
