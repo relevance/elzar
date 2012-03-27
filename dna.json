@@ -1,14 +1,14 @@
 {
-  "run_list":["role[plumbing]", "mysql::server", "ruby_enterprise", "passenger_enterprise::nginx", "rails_app"],
+  "run_list":["role[plumbing]", "mysql::server", "ruby", "passenger", "rails_app"],
   "mysql": {"server_root_password": ""},
-  "passenger_enterprise":  {
+  "passenger":  {
     "version":  "3.0.11",
-    "root_path":  "/opt/ruby-enterprise/lib/ruby/gems/1.8/gems/passenger-3.0.11",
-    "module_path":  "/opt/ruby-enterprise/lib/ruby/gems/1.8/gems/passenger-3.0.11/ext/apache2/mod_passenger.so"
+    "root_path":  "/opt/ruby/lib/ruby/gems/1.8/gems/passenger-3.0.11",
+    "module_path":  "/opt/ruby/lib/ruby/gems/1.8/gems/passenger-3.0.11/ext/apache2/mod_passenger.so"
   },
-  "ruby_enterprise":  {
-    "version":  "1.8.7-2012.02",
-    "url":  "http://rubyenterpriseedition.googlecode.com/files/ruby-enterprise-1.8.7-2012.02"
+  "ruby":  {
+    "version":  "1.9.3-p125",
+    "url":  "http://ftp.ruby-lang.org/pub/ruby/1.9/ruby-1.9.3-p125.tar.gz"
   },
   "rails_app":  {
     "name":  "elzar_test"
