@@ -1,5 +1,5 @@
 {
-  "run_list":["role[plumbing]", "mysql::server", "role[ruby_appstack]", "rails_app"],
+  "run_list":["role[plumbing]", "mysql::server", "role[enterprise_appstack]", "rails_app"],
   "mysql": {"server_root_password": ""},
   "passenger":  {
     "version":  "3.0.11",
