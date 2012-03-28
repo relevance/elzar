@@ -56,7 +56,15 @@ directory "/var/www/apps/" do
 end
 
 file "/home/deploy/.bashrc" do
-  content "export PATH=#{node[:ruby_enterprise][:install_path]}/bin:$PATH"
+  run_list = node.run_list.map(&:name)
+  ruby_path = if run_list.include?('ruby_appstack')
+    node[:ruby][:install_path]
+  elsif run_list.include?('enterprise_appstack')
+    node[:ruby_enterprise][:install_path]
+  else
+    '/usr/local'
+  end
+  content "export PATH=#{ruby_path}/bin:$PATH"
   owner 'deploy'
   group 'deploy'
   mode '0700'

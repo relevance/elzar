@@ -1,3 +1,3 @@
 default[:passenger][:version] = '3.0.11'
-default[:root_path] = "/opt/ruby/lib/ruby/gems/1.8/gems/passenger-3.0.11",
-default[:module_path] =  "/opt/ruby/lib/ruby/gems/1.8/gems/passenger-3.0.11/ext/apache2/mod_passenger.so"
+default[:passenger][:root_path] = "/opt/relevance-ruby/lib/ruby/gems/1.9.1/gems/passenger-3.0.11"
+default[:passenger][:module_path] =  "/opt/relevance-ruby/lib/ruby/gems/1.9.1/gems/passenger-3.0.11/ext/apache2/mod_passenger.so"
