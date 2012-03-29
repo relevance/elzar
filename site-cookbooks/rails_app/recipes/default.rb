@@ -85,8 +85,33 @@ template "#{node[:nginx][:dir]}/sites-enabled/#{node[:rails_app][:name]}" do
   notifies :reload, resources(:service => "nginx"), :immediately
 end
 
-gem_package "mysql"
-mysql_database "#{node[:rails_app][:name]}_#{node[:rails_app][:rails_env]}" do
-  connection({:host => 'localhost', :username => 'root', :password => node['mysql']['server_root_password']})
-  action :create
+if node.run_list.include? 'mysql::server'
+  gem_package "mysql"
+  mysql_database "#{node[:rails_app][:name]}_#{node[:rails_app][:rails_env]}" do
+    connection({:host => 'localhost', :username => 'root', :password => node['mysql']['server_root_password']})
+    action :create
+  end
+elsif node.run_list.include? 'role[postgres_database]'
+  gem_package 'pg'
+
+  postgres_connection_info = {:host => 'localhost', :username => 'postgres', :password => node['postgresql']['password']['postgres']}
+
+  postgresql_database_user 'deploy' do
+    connection postgres_connection_info
+    password 'd3pl0y-p0stgr3s'
+    action :create
+  end
+
+  postgresql_database "#{node[:rails_app][:name]}_#{node[:rails_app][:rails_env]}" do
+    connection postgres_connection_info
+    action :create
+    owner 'deploy'
+  end
+
+  template "#{node[:postgresql][:dir]}/pg_hba.conf" do
+    mode "0600"
+    owner 'postgres'
+    group 'postgres'
+    notifies :reload, resources(:service => 'postgresql')
+  end
 end
