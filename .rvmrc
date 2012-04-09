@@ -1,1 +1,1 @@
-rvm use ree-1.8.7@elzar
+rvm gemset use elzar
