@@ -11,6 +11,17 @@ group 'deploy' do
   append true
 end
 
+group 'admin' do
+  append true
+end
+
+cookbook_file "/etc/sudoers" do
+  source 'sudoers'
+  owner 'root'
+  group 'root'
+  mode '0440'
+end
+
 user "deploy" do
   shell "/bin/bash"
   action :create
@@ -33,6 +44,31 @@ file "/home/deploy/.ssh/authorized_keys" do
   content data_bag_item('deploy','authorized_keys')['keys'].join("\n")
   owner 'deploy'
   group 'deploy'
+  mode '0600'
+end
+
+user "relevance" do
+  shell "/bin/bash"
+  action :create
+  group 'admin'
+end
+
+directory "/home/relevance" do
+  owner 'relevance'
+  group 'admin'
+  mode '0755'
+end
+
+directory "/home/relevance/.ssh" do
+  owner 'relevance'
+  group 'admin'
+  mode '0755'
+end
+
+file "/home/relevance/.ssh/authorized_keys" do
+  content data_bag_item('deploy','authorized_keys')['keys'].join("\n")
+  owner 'relevance'
+  group 'admin'
   mode '0600'
 end
 
