@@ -7,6 +7,8 @@
 # All rights reserved - Do Not Redistribute
 #
 
+include_recipe "rails_app::system_libraries"
+
 group 'deploy' do
   append true
 end
