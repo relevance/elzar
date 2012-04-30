@@ -44,7 +44,7 @@ bash "Install Ruby Enterprise Edition" do
   code <<-EOH
   tar zxf ruby-enterprise-#{node[:ruby_enterprise][:version]}.tar.gz
   ruby-enterprise-#{node[:ruby_enterprise][:version]}/installer \
-    --auto=#{node[:ruby_enterprise][:install_path]} --dont-install-useful-gems
+    --auto=#{node[:ruby_enterprise][:install_path]}
   EOH
   not_if do
     ::File.exists?("#{node[:ruby_enterprise][:install_path]}/bin/ree-version") &&
@@ -55,4 +55,9 @@ end
 execute "Installing bundler" do
   command "#{node[:ruby_enterprise][:install_path]}/bin/gem install bundler"
   not_if "#{node[:ruby_enterprise][:install_path]}/bin/gem list -l bundler$ | grep -q bundler"
+end
+
+# Remove since ree-installed passenger causes a conflict with our specified version
+execute "Uninstall passenger" do
+  command "#{node[:ruby_enterprise][:install_path]}/bin/gem uninstall -Iax passenger"
 end
