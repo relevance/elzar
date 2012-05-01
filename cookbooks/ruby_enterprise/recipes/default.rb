@@ -61,3 +61,7 @@ end
 execute "Uninstall passenger" do
   command "#{node[:ruby_enterprise][:install_path]}/bin/gem uninstall -Iax passenger"
 end
+
+execute "Updating rubygems" do
+  command "#{node[:ruby_enterprise][:install_path]}/bin/gem update --system #{node[:ruby_enterprise][:gems_version]}"
+end

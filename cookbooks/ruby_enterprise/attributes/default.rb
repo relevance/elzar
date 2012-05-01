@@ -6,7 +6,7 @@
 # Author:: Joshua Timberman (<joshua@opscode.com>)
 # Author:: Sean Cribbs (<seancribbs@gmail.com>)
 # Author:: Michael Hale (<mikehale@gmail.com>)
-# 
+#
 # Copyright:: 2011, Mike Fiedler
 # Copyright:: 2009-2010, Opscode, Inc.
 # Copyright:: 2009, Sean Cribbs
@@ -30,3 +30,4 @@ default[:ruby_enterprise][:ruby_bin]     = "/opt/ruby-enterprise/bin/ruby"
 default[:ruby_enterprise][:gems_dir]     = "#{ruby_enterprise[:install_path]}/lib/ruby/gems/1.8"
 default[:ruby_enterprise][:version]      = '1.8.7-2011.03'
 default[:ruby_enterprise][:url]          = "http://rubyenterpriseedition.googlecode.com/files/ruby-enterprise-#{ruby_enterprise[:version]}"
+default[:ruby_enterprise][:gems_version] = "1.8.24"

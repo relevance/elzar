@@ -48,3 +48,7 @@ execute "Installing bundler" do
   command "#{node[:ruby][:install_path]}/bin/gem install bundler"
   not_if "#{node[:ruby][:install_path]}/bin/gem list -l bundler$ | grep -q bundler"
 end
+
+execute "Updating rubygems" do
+  command "#{node[:ruby][:install_path]}/bin/gem update --system #{node[:ruby][:gems_version]}"
+end
