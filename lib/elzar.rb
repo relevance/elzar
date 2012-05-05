@@ -4,6 +4,8 @@ require 'fileutils'
 require 'tmpdir'
 
 module Elzar
+  ELZAR_COOKBOOKS_DIR = 'elzar'
+
   def self.root_dir
     @root_dir ||= File.expand_path File.dirname(__FILE__) + '/../'
   end
@@ -12,20 +14,20 @@ module Elzar
     @templates_dir ||= "#{root_dir}/lib/elzar/templates"
   end
 
-  def self.bam!(options={})
-    options = {:destination => 'provision'}.update options
-    # Template.destination_directory = options[:destination]
-    create_user_provision_dir options[:destination]
+  def self.create_provision_directory(destination, options={})
+    # Template.destination_directory = destination
+    create_user_provision_dir destination.to_s
   end
 
-  def self.create_temp_provision_dir(user_dir)
+  def self.merge_and_create_temp_directory(user_dir)
     dest = Dir.mktmpdir
-    FileUtils.mkdir_p "#{dest}/elzar"
+    elzar_dir = "#{dest}/#{ELZAR_COOKBOOKS_DIR}"
+    FileUtils.mkdir_p elzar_dir
 
     cp "#{templates_dir}/solo.rb", dest
     cp_r "#{root_dir}/roles", dest
-    cp_r "#{root_dir}/cookbooks", "#{dest}/elzar"
-    cp_r "#{root_dir}/site-cookbooks", "#{dest}/elzar"
+    cp_r "#{root_dir}/cookbooks", elzar_dir
+    cp_r "#{root_dir}/site-cookbooks", elzar_dir
     # merges user provision with elzar's provision
     cp_r "#{user_dir}/.", dest
     dest
