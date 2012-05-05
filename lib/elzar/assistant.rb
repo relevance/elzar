@@ -1,0 +1,65 @@
+require 'fileutils'
+require 'tmpdir'
+
+module Elzar
+  module Assistant
+    ELZAR_COOKBOOKS_DIR = 'elzar'
+    # order matters
+    COOKBOOK_DIRS = ['site-cookbooks', 'cookbooks']
+
+    def self.generate_files(dest, options={})
+      vm_host_name = options[:app_name] ?
+        "#{options[:app_name].gsub('_','-')}.local" : "elzar.thinkrelevance.com"
+      cookbooks_path = COOKBOOK_DIRS + COOKBOOK_DIRS.map {|dir| "#{ROOT_DIR}/#{dir}" }
+      Template.generate 'Vagrantfile', dest, :vm_host_name => vm_host_name,
+        :cookbooks_path => cookbooks_path
+      if options[:authorized_keys]
+        create_authorized_key_data_bag(options[:authorized_keys], dest)
+      end
+      # TODO
+      # :ruby, :database, :gem_version
+      # generate_dna_json(options)
+    end
+
+    def self.create_user_provision_dir(dest)
+      FileUtils.mkdir_p dest
+      cp "#{Elzar.templates_dir}/dna.json", dest
+      cp "#{Elzar.templates_dir}/Gemfile", dest
+      cp "#{ROOT_DIR}/.rvmrc", dest
+      cp_r "#{ROOT_DIR}/data_bags", dest
+      cp_r "#{ROOT_DIR}/script", dest
+    end
+
+    def self.merge_and_create_temp_directory(user_dir)
+      dest = Dir.mktmpdir
+      elzar_dir = "#{dest}/#{ELZAR_COOKBOOKS_DIR}"
+      FileUtils.mkdir_p elzar_dir
+
+      cp "#{Elzar.templates_dir}/solo.rb", dest
+      cp_r "#{ROOT_DIR}/roles", dest
+      cp_r "#{ROOT_DIR}/cookbooks", elzar_dir
+      cp_r "#{ROOT_DIR}/site-cookbooks", elzar_dir
+      # merges user provision with elzar's provision
+      cp_r "#{user_dir}/.", dest
+      dest
+    end
+
+    private
+
+    def self.cp(*args)
+      FileUtils.cp(*args)
+    end
+
+    def self.cp_r(*args)
+      FileUtils.cp_r(*args)
+    end
+
+    def self.create_authorized_key_data_bag(authorized_keys, dest)
+      data_bag_dir = "#{dest}/data_bags/deploy"
+      FileUtils.mkdir_p data_bag_dir
+      File.open("#{data_bag_dir}/authorized_keys.json", 'w+') do |f|
+        f.write MultiJson.dump("id" => "authorized_keys", "keys" => authorized_keys)
+      end
+    end
+  end
+end
