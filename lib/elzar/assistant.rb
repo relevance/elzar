@@ -1,5 +1,6 @@
 require 'fileutils'
 require 'tmpdir'
+require 'elzar/chef_dna'
 
 module Elzar
   module Assistant
@@ -16,9 +17,9 @@ module Elzar
       if options[:authorized_keys]
         create_authorized_key_data_bag(options[:authorized_keys], dest)
       end
-      # TODO
-      # :ruby, :database, :gem_version
-      # generate_dna_json(options)
+      if options[:app_name] && options[:database] && options[:ruby_version]
+        create_dna_json(dest, *options.values_at(:app_name, :database, :ruby_version))
+      end
     end
 
     def self.create_user_provision_dir(dest)
@@ -52,6 +53,13 @@ module Elzar
 
     def self.cp_r(*args)
       FileUtils.cp_r(*args)
+    end
+
+    def self.create_dna_json(dest, app_name, database, ruby_version)
+      content = MultiJson.load(File.read("#{Elzar.templates_dir}/dna.json"))
+      content['rails_app']['name'] = app_name
+      ChefDNA.gene_splice(content, database, ruby_version)
+      File.open("#{dest}/dna.json", 'w+') {|f| f.write MultiJson.dump(content) }
     end
 
     def self.create_authorized_key_data_bag(authorized_keys, dest)
