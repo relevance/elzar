@@ -1,6 +1,7 @@
 require 'elzar/version'
 require 'elzar/template'
 require 'fileutils'
+require 'tmpdir'
 
 module Elzar
   def self.root_dir
@@ -11,36 +12,34 @@ module Elzar
     @templates_dir ||= "#{root_dir}/lib/elzar/templates"
   end
 
-  def self.provision_dir
-    "#{root_dir}/provision"
-  end
-
   def self.bam!(options={})
     options = {:destination => 'provision'}.update options
     # Template.destination_directory = options[:destination]
-    create_local_provision_dir provision_dir
-    create_remote_provision_dir options[:destination]
+    create_user_provision_dir options[:destination]
+  end
+
+  def self.create_temp_provision_dir(user_dir)
+    dest = Dir.mktmpdir
+    FileUtils.mkdir_p "#{dest}/elzar"
+
+    cp "#{templates_dir}/solo.rb", dest
+    cp_r "#{root_dir}/roles", dest
+    cp_r "#{root_dir}/cookbooks", "#{dest}/elzar"
+    cp_r "#{root_dir}/site-cookbooks", "#{dest}/elzar"
+    # merges user provision with elzar's provision
+    cp_r "#{user_dir}/.", dest
+    dest
   end
 
   private
 
-  def self.create_local_provision_dir(dest)
-    FileUtils.rm_rf dest
-    FileUtils.mkdir_p "#{dest}/elzar"
-
-    cp "#{templates_dir}/solo.rb", dest
-    cp_r "#{root_dir}/data_bags", dest
-    cp_r "#{root_dir}/roles", dest
-    cp_r "#{root_dir}/cookbooks", "#{dest}/elzar"
-    cp_r "#{root_dir}/site-cookbooks", "#{dest}/elzar"
-  end
-
-  def self.create_remote_provision_dir(dest)
+  def self.create_user_provision_dir(dest)
     FileUtils.mkdir_p dest
     cp "#{templates_dir}/dna.json", dest
     cp "#{templates_dir}/Gemfile", dest
     cp "#{templates_dir}/Vagrantfile", dest
     cp "#{root_dir}/.rvmrc", dest
+    cp_r "#{root_dir}/data_bags", dest
     cp_r "#{root_dir}/script", dest
   end
 
