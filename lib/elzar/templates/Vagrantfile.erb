@@ -2,11 +2,11 @@ require 'json'
 Vagrant::Config.run do |config|
   config.vm.box       = "lucid64"
   config.vm.box_url   = "http://files.vagrantup.com/lucid64.box"
-  config.vm.host_name = "elzar.thinkrelevance.com"
+  config.vm.host_name = <%= @vm_host_name.inspect %>
   config.vm.network     "172.25.5.5"
   config.vm.provision :shell, :path => "upgrade-chef.sh"
   config.vm.provision :chef_solo do |chef|
-    chef.cookbooks_path = ["site-cookbooks", "cookbooks"]
+  chef.cookbooks_path = <%= @cookbooks_path.inspect %>
     chef.roles_path = "roles"
     chef.data_bags_path = "data_bags"
     json = JSON.parse File.read('dna.json')

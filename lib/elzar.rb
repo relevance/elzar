@@ -5,6 +5,8 @@ require 'tmpdir'
 
 module Elzar
   ELZAR_COOKBOOKS_DIR = 'elzar'
+  # order matters
+  COOKBOOK_DIRS = ['site-cookbooks', 'cookbooks']
 
   def self.root_dir
     @root_dir ||= File.expand_path File.dirname(__FILE__) + '/../'
@@ -15,8 +17,8 @@ module Elzar
   end
 
   def self.create_provision_directory(destination, options={})
-    # Template.destination_directory = destination
     create_user_provision_dir destination.to_s
+    generate_files destination.to_s, options
   end
 
   def self.merge_and_create_temp_directory(user_dir)
@@ -39,15 +41,18 @@ module Elzar
     FileUtils.mkdir_p dest
     cp "#{templates_dir}/dna.json", dest
     cp "#{templates_dir}/Gemfile", dest
-    cp "#{templates_dir}/Vagrantfile", dest
     cp "#{root_dir}/.rvmrc", dest
     cp_r "#{root_dir}/data_bags", dest
     cp_r "#{root_dir}/script", dest
   end
 
-  def self.generate_files
+  def self.generate_files(dest, options={})
+    vm_host_name = options[:app_name] ?
+      "#{options[:app_name].gsub('_','-')}.local" : "elzar.thinkrelevance.com"
+    cookbooks_path = COOKBOOK_DIRS + COOKBOOK_DIRS.map {|dir| "#{root_dir}/#{dir}" }
+    generate 'Vagrantfile', dest, :vm_host_name => vm_host_name,
+      :cookbooks_path => cookbooks_path
     # TODO
-    # generate_vagrantfile(options[:app_name])
     # :ruby, :database, :gem_version
     # generate_dna_json(options)
     # generate_data_bags
@@ -62,6 +67,6 @@ module Elzar
   end
 
   def self.generate(*args)
-    Template.generate_to_file(*args)
+    Template.generate(*args)
   end
 end

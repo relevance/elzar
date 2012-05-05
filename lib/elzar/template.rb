@@ -2,16 +2,15 @@ require 'erb'
 
 module Elzar
   module Template
-    class << self; attr_accessor :source_directory, :destination_directory; end
+    class << self; attr_accessor :source_directory; end
     self.source_directory = File.dirname(__FILE__) + '/templates'
-    self.destination_directory = '.'
 
-    def self.generate_to_file(file, ivars={})
-      str = generate(file, ivars)
-      File.open(destination_directory + "/#{file}", 'w+') {|f| f.write str }
+    def self.generate(file, dest, ivars={})
+      str = generate_string(file, ivars)
+      File.open("#{dest}/#{file}", 'w+') {|f| f.write str }
     end
 
-    def self.generate(file, ivars={})
+    def self.generate_string(file, ivars={})
       file = source_directory + "/#{file}.erb"
       ERB.new(File.read(file)).result(create_template_binding(ivars))
     end
