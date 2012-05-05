@@ -2,6 +2,7 @@ require 'elzar/version'
 require 'elzar/template'
 require 'fileutils'
 require 'tmpdir'
+require 'multi_json'
 
 module Elzar
   ELZAR_COOKBOOKS_DIR = 'elzar'
@@ -52,10 +53,20 @@ module Elzar
     cookbooks_path = COOKBOOK_DIRS + COOKBOOK_DIRS.map {|dir| "#{root_dir}/#{dir}" }
     generate 'Vagrantfile', dest, :vm_host_name => vm_host_name,
       :cookbooks_path => cookbooks_path
+    if options[:authorized_keys]
+      create_authorized_key_data_bag(options[:authorized_keys], dest)
+    end
     # TODO
     # :ruby, :database, :gem_version
     # generate_dna_json(options)
-    # generate_data_bags
+  end
+
+  def self.create_authorized_key_data_bag(authorized_keys, dest)
+    data_bag_dir = "#{dest}/data_bags/deploy"
+    FileUtils.mkdir_p data_bag_dir
+    File.open("#{data_bag_dir}/authorized_keys.json", 'w+') do |f|
+      f.write MultiJson.dump("id" => "authorized_keys", "keys" => authorized_keys)
+    end
   end
 
   def self.cp(*args)
