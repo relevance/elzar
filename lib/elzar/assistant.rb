@@ -5,6 +5,7 @@ require 'elzar/chef_dna'
 module Elzar
   module Assistant
     ELZAR_COOKBOOKS_DIR = 'elzar'
+    CHEF_SOLO_DIR = '/tmp/chef-solo'
     # order matters
     COOKBOOK_DIRS = ['site-cookbooks', 'cookbooks']
 
@@ -36,7 +37,10 @@ module Elzar
       elzar_dir = "#{dest}/#{ELZAR_COOKBOOKS_DIR}"
       FileUtils.mkdir_p elzar_dir
 
-      cp "#{Elzar.templates_dir}/solo.rb", dest
+      cookbook_path = COOKBOOK_DIRS.map {|dir| "#{CHEF_SOLO_DIR}/#{dir}" } +
+        COOKBOOK_DIRS.map {|dir| "#{CHEF_SOLO_DIR}/#{ELZAR_COOKBOOKS_DIR}/#{dir}" }
+      Template.generate "solo.rb", dest, :cookbook_path => cookbook_path,
+        :chef_solo_dir => CHEF_SOLO_DIR
       cp_r "#{ROOT_DIR}/roles", dest
       cp_r "#{ROOT_DIR}/cookbooks", elzar_dir
       cp_r "#{ROOT_DIR}/site-cookbooks", elzar_dir

@@ -1,0 +1,6 @@
+file_cache_path "<%= @chef_solo_dir %>"
+data_bag_path   "<%= @chef_solo_dir %>/data_bags"
+cookbook_path   <%= @cookbook_path.inspect %>
+role_path       "<%= @chef_solo_dir %>/roles"
+log_level       :debug
+log_location    STDOUT
