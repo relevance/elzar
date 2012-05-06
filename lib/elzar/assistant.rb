@@ -6,15 +6,12 @@ module Elzar
   module Assistant
     ELZAR_COOKBOOKS_DIR = 'elzar'
     CHEF_SOLO_DIR = '/tmp/chef-solo'
-    # order matters
-    COOKBOOK_DIRS = ['site-cookbooks', 'cookbooks']
 
     def self.generate_files(dest, options={})
       vm_host_name = options[:app_name] ?
         "#{options[:app_name].gsub('_','-')}.local" : "elzar.thinkrelevance.com"
-      cookbooks_path = COOKBOOK_DIRS + COOKBOOK_DIRS.map {|dir| "#{ROOT_DIR}/#{dir}" }
       Template.generate 'Vagrantfile', dest, :vm_host_name => vm_host_name,
-        :cookbooks_path => cookbooks_path
+        :cookbooks_path => Elzar::COOKBOOK_DIRS
       if options[:authorized_keys]
         create_authorized_key_data_bag(options[:authorized_keys], dest)
       end
@@ -27,6 +24,7 @@ module Elzar
       FileUtils.mkdir_p dest
       cp "#{Elzar.templates_dir}/dna.json", dest
       cp "#{Elzar.templates_dir}/Gemfile", dest
+      cp "#{Elzar.templates_dir}/upgrade-chef.sh", dest
       cp "#{ROOT_DIR}/.rvmrc", dest
       cp_r "#{ROOT_DIR}/data_bags", dest
       cp_r "#{ROOT_DIR}/script", dest
@@ -37,8 +35,8 @@ module Elzar
       elzar_dir = "#{dest}/#{ELZAR_COOKBOOKS_DIR}"
       FileUtils.mkdir_p elzar_dir
 
-      cookbook_path = COOKBOOK_DIRS.map {|dir| "#{CHEF_SOLO_DIR}/#{dir}" } +
-        COOKBOOK_DIRS.map {|dir| "#{CHEF_SOLO_DIR}/#{ELZAR_COOKBOOKS_DIR}/#{dir}" }
+      cookbook_path = Elzar::COOKBOOK_DIRS.map {|dir| "#{CHEF_SOLO_DIR}/#{dir}" } +
+        Elzar::COOKBOOK_DIRS.map {|dir| "#{CHEF_SOLO_DIR}/#{ELZAR_COOKBOOKS_DIR}/#{dir}" }
       Template.generate "solo.rb", dest, :cookbook_path => cookbook_path,
         :chef_solo_dir => CHEF_SOLO_DIR
       cp_r "#{ROOT_DIR}/roles", dest

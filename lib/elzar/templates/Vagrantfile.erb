@@ -1,4 +1,6 @@
 require 'json'
+require 'elzar'
+
 Vagrant::Config.run do |config|
   config.vm.box       = "lucid64"
   config.vm.box_url   = "http://files.vagrantup.com/lucid64.box"
@@ -6,8 +8,8 @@ Vagrant::Config.run do |config|
   config.vm.network     "172.25.5.5"
   config.vm.provision :shell, :path => "upgrade-chef.sh"
   config.vm.provision :chef_solo do |chef|
-  chef.cookbooks_path = <%= @cookbooks_path.inspect %>
-    chef.roles_path = "roles"
+    chef.cookbooks_path = <%= @cookbooks_path.inspect %> + Elzar.vagrant_cookbooks_path
+    chef.roles_path = Elzar.vagrant_roles_path
     chef.data_bags_path = "data_bags"
     json = JSON.parse File.read('dna.json')
     chef.run_list = json['run_list']
