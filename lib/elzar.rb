@@ -1,10 +1,11 @@
 require 'elzar/version'
 require 'elzar/template'
 require 'elzar/assistant'
-require 'multi_json'
 
 module Elzar
   ROOT_DIR = File.expand_path File.dirname(__FILE__) + '/../'
+  CHEF_DIR = "#{ROOT_DIR}/chef"
+  ROLES_DIR = "#{CHEF_DIR}/roles"
   # order matters
   COOKBOOK_DIRS = ['site-cookbooks', 'cookbooks']
 
@@ -13,7 +14,7 @@ module Elzar
   end
 
   def self.create_provision_directory(destination, options={})
-    Assistant.create_user_provision_dir destination.to_s
+    Assistant.create_user_provision_dir destination.to_s, options[:local]
     Assistant.generate_files destination.to_s, options
   end
 
@@ -22,10 +23,10 @@ module Elzar
   end
 
   def self.vagrant_cookbooks_path
-    COOKBOOK_DIRS.map {|dir| "#{ROOT_DIR}/#{dir}" }
+    COOKBOOK_DIRS.map {|dir| "#{CHEF_DIR}/#{dir}" }
   end
 
   def self.vagrant_roles_path
-    "#{ROOT_DIR}/roles"
+    ROLES_DIR
   end
 end

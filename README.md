@@ -5,6 +5,9 @@ Download and install VirtualBox (as instructed in the Vagrant
 your bundle and grab the Ubuntu Lucid VM image.
 
     gem install bundler
+    # creates provision/ for local vagrant use
+    rake bam
+    cd provision
     bundle install
     vagrant box add lucid64 http://files.vagrantup.com/lucid64.box
 

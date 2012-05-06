@@ -4,14 +4,56 @@ require 'elzar/chef_dna'
 
 module Elzar
   module Assistant
-    ELZAR_COOKBOOKS_DIR = 'elzar'
+    ELZAR_DIR = 'elzar'
     CHEF_SOLO_DIR = '/tmp/chef-solo'
 
     def self.generate_files(dest, options={})
       vm_host_name = options[:app_name] ?
         "#{options[:app_name].gsub('_','-')}.local" : "elzar.thinkrelevance.com"
       Template.generate 'Vagrantfile', dest, :vm_host_name => vm_host_name,
-        :cookbooks_path => Elzar::COOKBOOK_DIRS
+        :cookbooks_path => Elzar::COOKBOOK_DIRS, :local => options[:local]
+      if options[:local]
+        generate_local_files dest
+      else
+        require 'multi_json'
+        generate_user_files dest, options
+      end
+    end
+
+    def self.create_user_provision_dir(dest, local=false)
+      FileUtils.mkdir_p dest
+      cp "#{Elzar.templates_dir}/dna.json", dest
+      cp "#{Elzar.templates_dir}/Gemfile", dest
+      cp "#{Elzar.templates_dir}/upgrade-chef.sh", dest
+      cp "#{Elzar.templates_dir}/.rvmrc", dest
+      cp_r "#{Elzar.templates_dir}/data_bags", dest
+      cp_r "#{Elzar.templates_dir}/script", dest
+    end
+
+    def self.merge_and_create_temp_directory(user_dir)
+      dest = Dir.mktmpdir
+      elzar_dir = "#{dest}/#{ELZAR_DIR}"
+      FileUtils.mkdir_p elzar_dir
+
+      generate_solo_rb dest, Elzar::COOKBOOK_DIRS.map {|dir| "#{CHEF_SOLO_DIR}/#{ELZAR_DIR}/#{dir}" }
+      cp_r Elzar::ROLES_DIR, dest
+      cp_r "#{Elzar::CHEF_DIR}/cookbooks", elzar_dir
+      cp_r "#{Elzar::CHEF_DIR}/site-cookbooks", elzar_dir
+      # merges user provision with elzar's provision
+      cp_r "#{user_dir}/.", dest
+      dest
+    end
+
+    private
+
+    def self.generate_local_files(dest)
+      generate_solo_rb dest
+      cp_r Elzar::ROLES_DIR, dest
+      cp_r "#{Elzar::CHEF_DIR}/cookbooks", dest
+      cp_r "#{Elzar::CHEF_DIR}/site-cookbooks", dest
+    end
+
+    def self.generate_user_files(dest, options={})
       if options[:authorized_keys]
         create_authorized_key_data_bag(options[:authorized_keys], dest)
       end
@@ -20,34 +62,11 @@ module Elzar
       end
     end
 
-    def self.create_user_provision_dir(dest)
-      FileUtils.mkdir_p dest
-      cp "#{Elzar.templates_dir}/dna.json", dest
-      cp "#{Elzar.templates_dir}/Gemfile", dest
-      cp "#{Elzar.templates_dir}/upgrade-chef.sh", dest
-      cp "#{ROOT_DIR}/.rvmrc", dest
-      cp_r "#{ROOT_DIR}/data_bags", dest
-      cp_r "#{ROOT_DIR}/script", dest
-    end
-
-    def self.merge_and_create_temp_directory(user_dir)
-      dest = Dir.mktmpdir
-      elzar_dir = "#{dest}/#{ELZAR_COOKBOOKS_DIR}"
-      FileUtils.mkdir_p elzar_dir
-
-      cookbook_path = Elzar::COOKBOOK_DIRS.map {|dir| "#{CHEF_SOLO_DIR}/#{dir}" } +
-        Elzar::COOKBOOK_DIRS.map {|dir| "#{CHEF_SOLO_DIR}/#{ELZAR_COOKBOOKS_DIR}/#{dir}" }
-      Template.generate "solo.rb", dest, :cookbook_path => cookbook_path,
+    def self.generate_solo_rb(dest, additional=[])
+      dirs = Elzar::COOKBOOK_DIRS.map {|dir| "#{CHEF_SOLO_DIR}/#{dir}" }
+      Template.generate "solo.rb", dest, :cookbook_path => dirs + additional,
         :chef_solo_dir => CHEF_SOLO_DIR
-      cp_r "#{ROOT_DIR}/roles", dest
-      cp_r "#{ROOT_DIR}/cookbooks", elzar_dir
-      cp_r "#{ROOT_DIR}/site-cookbooks", elzar_dir
-      # merges user provision with elzar's provision
-      cp_r "#{user_dir}/.", dest
-      dest
     end
-
-    private
 
     def self.cp(*args)
       FileUtils.cp(*args)
