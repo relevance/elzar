@@ -28,6 +28,7 @@ module Elzar
       cp "#{Elzar.templates_dir}/.rvmrc", dest
       cp_r "#{Elzar.templates_dir}/data_bags", dest
       cp_r "#{Elzar.templates_dir}/script", dest
+      cp_r "#{Elzar.templates_dir}/.chef", dest
     end
 
     def self.merge_and_create_temp_directory(user_dir)
@@ -39,7 +40,6 @@ module Elzar
       cp_r Elzar::ROLES_DIR, dest
       cp_r "#{Elzar::CHEF_DIR}/cookbooks", elzar_dir
       cp_r "#{Elzar::CHEF_DIR}/site-cookbooks", elzar_dir
-      cp_r "#{Elzar::CHEF_DIR}/.chef", dest
       # merges user provision with elzar's provision
       cp_r "#{user_dir}/.", dest
       dest
@@ -52,7 +52,6 @@ module Elzar
       cp_r Elzar::ROLES_DIR, dest
       cp_r "#{Elzar::CHEF_DIR}/cookbooks", dest
       cp_r "#{Elzar::CHEF_DIR}/site-cookbooks", dest
-      cp_r "#{Elzar::CHEF_DIR}/.chef", dest
     end
 
     def self.generate_user_files(dest, options={})
