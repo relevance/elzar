@@ -6,3 +6,10 @@ task :bam do
   require 'elzar'
   Elzar.create_provision_directory File.dirname(__FILE__) + '/provision', :local => true
 end
+
+desc "Run Rspec tests"
+task :spec do
+  sh 'rspec spec'
+end
+
+task :default => :spec
