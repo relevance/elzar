@@ -26,6 +26,7 @@ module Elzar
       cp "#{Elzar.templates_dir}/Gemfile", dest
       cp "#{Elzar.templates_dir}/upgrade-chef.sh", dest
       cp "#{Elzar.templates_dir}/.rvmrc", dest
+      cp "#{Elzar.templates_dir}/README.md", dest
       cp_r "#{Elzar.templates_dir}/data_bags", dest
       cp_r "#{Elzar.templates_dir}/script", dest
       cp_r "#{Elzar.templates_dir}/.chef", dest
