@@ -50,5 +50,5 @@ execute "Installing bundler" do
 end
 
 execute "Updating rubygems" do
-  command "#{node[:ruby][:install_path]}/bin/gem update --system #{node[:ruby][:gems_version]}"
+  command "#{node[:ruby][:install_path]}/bin/gem update --system && #{node[:ruby][:install_path]}/bin/gem update --system #{node[:ruby][:gems_version]}"
 end
