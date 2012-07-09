@@ -27,7 +27,7 @@ include_recipe "build-essential"
 
 packages = value_for_platform(
     ["centos","redhat","fedora"] => {'default' => ['readline-devel', 'openssl-devel', 'patch']},
-    "default" => ['libssl-dev', 'libreadline5-dev']
+    "default" => ['libssl-dev', 'libreadline6-dev']
   )
 
 packages.each do |pkg|

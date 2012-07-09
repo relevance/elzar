@@ -10,7 +10,7 @@ include_recipe "build-essential"
 ruby_tarball = "/tmp/ruby-#{node[:ruby][:version]}.tar.gz"
 packages = value_for_platform(
     ["centos","redhat","fedora"] => {'default' => ['readline-devel', 'openssl-devel', 'patch']},
-    "default" => ['libssl-dev', 'libreadline5-dev', 'libyaml-dev']
+    "default" => ['libssl-dev', 'libreadline6-dev', 'libyaml-dev']
   )
 
 packages.each do |pkg|
