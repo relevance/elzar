@@ -4,14 +4,13 @@ require 'elzar/chef_dna'
 
 module Elzar
   module Assistant
-    ELZAR_DIR = 'elzar'
     CHEF_SOLO_DIR = '/tmp/chef-solo'
 
     def self.generate_files(dest, options={})
       vm_host_name = options[:app_name] ?
         "#{options[:app_name].gsub('_','-')}.local" : "elzar.thinkrelevance.com"
       Template.generate 'Vagrantfile', dest, :vm_host_name => vm_host_name,
-        :cookbooks_path => Elzar::COOKBOOK_DIRS, :local => options[:local]
+        :cookbook_paths => cookbook_paths(dest), :local => options[:local]
       if options[:local]
         generate_local_files dest
       else
@@ -32,27 +31,35 @@ module Elzar
       cp_r "#{Elzar.templates_dir}/.chef", dest
     end
 
-    def self.merge_and_create_temp_directory(user_dir)
-      dest = Dir.mktmpdir
-      elzar_dir = "#{dest}/#{ELZAR_DIR}"
-      FileUtils.mkdir_p elzar_dir
-
-      generate_solo_rb dest, Elzar::COOKBOOK_DIRS.map {|dir| "#{CHEF_SOLO_DIR}/#{ELZAR_DIR}/#{dir}" }
-      cp_r Elzar::ROLES_DIR, dest
-      cp_r "#{Elzar::CHEF_DIR}/cookbooks", elzar_dir
-      cp_r "#{Elzar::CHEF_DIR}/site-cookbooks", elzar_dir
-      # merges user provision with elzar's provision
-      cp_r "#{user_dir}/.", dest
-      dest
+    def self.merge_and_create_temp_directory(application_chef_assets_dir)
+      chef_staging_area = Dir.mktmpdir
+      stage_elzar_chef_assets(chef_staging_area)
+      merge_chef_assets(application_chef_assets_dir, chef_staging_area)
+      generate_solo_rb(chef_staging_area)
+      chef_staging_area
     end
 
     private
 
+    def self.cookbook_paths(chef_staging_area)
+      %w[elzar-cookbooks elzar-site-cookbooks cookbooks site-cookbooks].select do |path|
+        File.exist?("#{chef_staging_area}/#{path}")
+      end
+    end
+
     def self.generate_local_files(dest)
-      generate_solo_rb dest
-      cp_r Elzar::ROLES_DIR, dest
-      cp_r "#{Elzar::CHEF_DIR}/cookbooks", dest
-      cp_r "#{Elzar::CHEF_DIR}/site-cookbooks", dest
+      stage_elzar_chef_assets(dest)
+      generate_solo_rb(dest)
+    end
+
+    def self.stage_elzar_chef_assets(dest)
+      cp_r "#{Elzar::CHEF_DIR}/roles",          "#{dest}/roles"
+      cp_r "#{Elzar::CHEF_DIR}/cookbooks",      "#{dest}/elzar-cookbooks"
+      cp_r "#{Elzar::CHEF_DIR}/site-cookbooks", "#{dest}/elzar-site-cookbooks"
+    end
+
+    def self.merge_chef_assets(src, dest)
+      cp_r "#{src}/.", dest
     end
 
     def self.generate_user_files(dest, options={})
@@ -64,10 +71,8 @@ module Elzar
       end
     end
 
-    def self.generate_solo_rb(dest, additional=[])
-      dirs = Elzar::COOKBOOK_DIRS.map {|dir| "#{CHEF_SOLO_DIR}/#{dir}" }
-      Template.generate "solo.rb", dest, :cookbook_path => dirs + additional,
-        :chef_solo_dir => CHEF_SOLO_DIR
+    def self.generate_solo_rb(dest)
+      Template.generate "solo.rb", dest, :cookbook_paths => cookbook_paths(dest), :chef_solo_dir => CHEF_SOLO_DIR
     end
 
     def self.cp(*args)

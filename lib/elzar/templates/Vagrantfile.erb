@@ -8,8 +8,7 @@ Vagrant::Config.run do |config|
   config.vm.network     "172.25.5.5"
   config.vm.provision :shell, :path => "upgrade-chef.sh"
   config.vm.provision :chef_solo do |chef|
-    chef.cookbooks_path = <%= @cookbooks_path.inspect %>
-    <%= "chef.cookbooks_path.concat Elzar.vagrant_cookbooks_path" unless @local %>
+    chef.cookbooks_path = <%= @local ? 'Elzar.vagrant_cookbook_paths' : [] %> + <%= @cookbook_paths.inspect %>
     chef.roles_path = <%= @local ? 'roles'.inspect : 'Elzar.vagrant_roles_path' %>
     chef.data_bags_path = "data_bags"
     json = JSON.parse File.read('dna.json')
