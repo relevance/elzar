@@ -5,9 +5,6 @@ require 'elzar/assistant'
 module Elzar
   ROOT_DIR = File.expand_path File.dirname(__FILE__) + '/../'
   CHEF_DIR = "#{ROOT_DIR}/chef"
-  ROLES_DIR = "#{CHEF_DIR}/roles"
-  # order matters
-  COOKBOOK_DIRS = ['site-cookbooks', 'cookbooks']
 
   def self.templates_dir
     @templates_dir ||= "#{ROOT_DIR}/lib/elzar/templates"
@@ -22,11 +19,15 @@ module Elzar
     Assistant.merge_and_create_temp_directory user_dir
   end
 
-  def self.vagrant_cookbooks_path
-    COOKBOOK_DIRS.map {|dir| "#{CHEF_DIR}/#{dir}" }
+  def self.vagrant_cookbook_paths
+    # order matters
+    [
+     "#{CHEF_DIR}/cookbooks",
+     "#{CHEF_DIR}/site-cookbooks",
+    ]
   end
 
   def self.vagrant_roles_path
-    ROLES_DIR
+    "#{CHEF_DIR}/roles"
   end
 end
