@@ -39,12 +39,16 @@ test_nginx_config() {
 
 start() {
   test_nginx_config
+  if [ -s "$PID" ] && ! pidofproc -p "$PID" "$DAEMON" >/dev/null ; then
+      echo "Stale pid file. Removing..."
+      rm -f "$PID"
+  fi
   if [ ! -s $PID ]
   then
       echo -n "Starting $DESC: "
       $DAEMON
   else
-      echo -n "$DESC already started"
+      echo "$DESC already started"
   fi
 }
 
