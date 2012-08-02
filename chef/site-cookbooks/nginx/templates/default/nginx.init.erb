@@ -45,6 +45,8 @@ start() {
   fi
   if [ ! -s $PID ]
   then
+      # ensure no nginx workers are hanging around
+      killall -u <%= node[:nginx][:user] %> nginx
       echo -n "Starting $DESC: "
       $DAEMON
   else
