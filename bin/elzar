@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'gli'
 begin # XXX: Remove this begin/rescue before distributing your app
-require 'elzar/cli'
+  require 'elzar/cli'
 rescue LoadError
   STDERR.puts "In development, you need to use `bundle exec bin/elzar` to run your app"
   STDERR.puts "At install-time, RubyGems will make sure lib, etc. are in the load path"
@@ -15,18 +15,16 @@ program_desc 'Describe your application here'
 
 version Elzar::VERSION
 
-#desc 'Describe some switch here'
-#switch [:s,:switch]
-
-#desc 'Describe some flag here'
-#default_value 'the default'
-#arg_name 'The name of the argument'
-#flag [:f,:flagname]
-
 desc 'Sets up default provisioning skeleton'
 command :install do |c|
+  c.flag [:s,:stack],
+    :default_value => 'rails',
+    :arg_name => 'stack',
+    :must_match => %w[clojure rails],
+    :desc => 'The application stack you wish to deploy'
+
   c.action do |global_options,options,args|
-    Elzar::Cli.install(global_options, options, args)
+    Elzar::Cli.install(global_options.merge(options), args)
   end
 end
 

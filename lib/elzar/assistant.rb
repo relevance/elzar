@@ -20,9 +20,11 @@ module Elzar
       end
     end
 
-    def self.create_user_provision_dir(dest, local=false)
+    def self.create_user_provision_dir(dest, options={})
+      stack = options[:stack] || 'rails' # TODO be better than this
+
       FileUtils.mkdir_p dest
-      cp "#{Elzar.templates_dir}/dna.json", dest
+      cp "#{Elzar.templates_dir}/dna/#{stack}.json", "#{dest}/dna.json"
       cp "#{Elzar.templates_dir}/Gemfile", dest
       cp "#{Elzar.templates_dir}/upgrade-chef.sh", dest
       cp "#{Elzar.templates_dir}/.rvmrc", dest

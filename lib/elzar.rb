@@ -14,7 +14,7 @@ module Elzar
   end
 
   def self.create_provision_directory(destination, options={})
-    Assistant.create_user_provision_dir destination.to_s, options[:local]
+    Assistant.create_user_provision_dir destination.to_s, options
     Assistant.generate_files destination.to_s, options
   end
 
