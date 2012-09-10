@@ -28,11 +28,11 @@ command :init do |c|
   end
 end
 
-desc 'Describe provision here'
+desc 'Describe preheat here'
 arg_name 'Describe arguments to provision here'
-command :provision do |c|
+command :preheat do |c|
   c.action do |global_options,options,args|
-    puts "provision command ran"
+    puts "preheat command ran"
   end
 end
 
