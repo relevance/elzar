@@ -1,0 +1,13 @@
+# !!! DO NOT add this file to source control !!!
+#
+# Settings in this file override settings in aws_config.yml
+aws_credentials:
+  :aws_access_key_id: <your aws access key id>
+  :aws_secret_access_key: <your aws secret access key>
+
+server:
+  private_key: |
+    -----BEGIN RSA PRIVATE KEY-----
+    Include the RSA private key here. This should correspond to the keypair indicated
+    by server[:creation_config][:key_name] in aws_config.yml.
+    -----END RSA PRIVATE KEY-----

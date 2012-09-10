@@ -23,11 +23,14 @@ module Elzar
       stack = options[:stack] || 'rails' # TODO be better than this
 
       FileUtils.mkdir_p dest
+      cp "#{Elzar.templates_dir}/.gitignore", "#{dest}/.gitignore"
+      cp "#{Elzar.templates_dir}/.rvmrc", dest
+      cp "#{Elzar.templates_dir}/aws_config.yml", dest
+      cp "#{Elzar.templates_dir}/aws_config.private.yml", dest
       cp "#{Elzar.templates_dir}/dna/#{stack}.json", "#{dest}/dna.json"
       cp "#{Elzar.templates_dir}/Gemfile", dest
-      cp "#{Elzar.templates_dir}/upgrade-chef.sh", dest
-      cp "#{Elzar.templates_dir}/.rvmrc", dest
       cp "#{Elzar.templates_dir}/README.md", dest
+      cp "#{Elzar.templates_dir}/upgrade-chef.sh", dest
       cp_r "#{Elzar.templates_dir}/data_bags", dest
       cp_r "#{Elzar.templates_dir}/script", dest
       cp_r "#{Elzar.templates_dir}/.chef", dest
