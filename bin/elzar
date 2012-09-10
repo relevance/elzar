@@ -32,6 +32,7 @@ desc 'Describe preheat here'
 arg_name 'Describe arguments to provision here'
 command :preheat do |c|
   c.action do |global_options,options,args|
+    # TODO Pull over work from RelevanceRails::Provision - Up to instance.bootstrap
     puts "preheat command ran"
   end
 end
@@ -40,6 +41,7 @@ desc 'Describe cook here'
 arg_name 'Describe arguments to cook here'
 command :cook do |c|
   c.action do |global_options,options,args|
+    # TODO Pull over work from RelevanceRails::Provision - After instance.bootstrap
     puts "cook command ran"
   end
 end
