@@ -17,6 +17,8 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'gli', '~> 2.0.0'
   s.add_dependency 'multi_json', '~> 1.3.0'
+  s.add_dependency 'fog', '~> 1.5.0'
+  s.add_dependency 'slushy', '~> 0.1.2'
   s.add_development_dependency 'rake', '~> 0.9.2.2'
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'bundler'
