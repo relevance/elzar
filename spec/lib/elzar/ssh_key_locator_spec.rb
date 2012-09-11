@@ -32,7 +32,19 @@ describe Elzar::SshKeyLocator do
       keys.should == ['foo', 'bar']
     end
 
+  end
 
+  describe "#find_keys" do
+    it "returns the local keys when they exist" do
+      Elzar::SshKeyLocator.should_receive(:find_local_keys).and_return ['some-local-key']
+      Elzar::SshKeyLocator.find_keys.should == ['some-local-key']
+    end
+
+    it "returns the ssh-agent keys when no local keys exist" do
+      Elzar::SshKeyLocator.stub(:find_local_keys).and_return []
+      Elzar::SshKeyLocator.should_receive(:find_agent_keys).and_return ['some-agent-key']
+      Elzar::SshKeyLocator.find_keys.should == ['some-agent-key']
+    end
   end
 
 end
