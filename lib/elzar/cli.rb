@@ -11,6 +11,7 @@ module Elzar
       private
 
       def notify(msg)
+        # TODO chop off only initial indentation level
         puts msg.gsub(/^\s+/,'')
       end
     end
@@ -46,18 +47,40 @@ module Elzar
     end
 
     class Preheat < Runner
-
       attr_reader :instance_name
 
-      def initialize(instance_name, options)
+      def initialize(instance_name, options = {})
         @instance_name = instance_name
         @aws_config_file = options[:aws_config_file]
       end
 
       def run
         notify "Provisioning an instance..."
-        instance_id = Elzar::Compute.provision_and_bootstrap!(instance_name)
-        notify "Finished Provisioning Server - Instance ID #{instance_id}"
+        instance_id, instance_ip = Elzar::Compute.provision_and_bootstrap!(instance_name)
+        notify <<-MSG
+          Finished Provisioning Server
+            Instance ID: #{instance_id}
+            Instance IP: #{instance_ip}
+        MSG
+      end
+    end
+
+    class Cook < Runner
+      attr_reader :instance_id
+
+      def initialize(instance_id, options = {})
+        @instance_id = instance_id
+        puts @instance_id
+      end
+
+      def run
+        notify "Cooking..."
+        inst_id, inst_ip = Elzar::Compute.converge!(instance_id)
+        notify <<-MSG
+          Finished Provisioning Server
+            Instance ID: #{inst_id}
+            Instance IP: #{inst_ip}
+        MSG
       end
     end
   end

@@ -5,10 +5,10 @@ require 'yaml'
 module Elzar
   module Compute
     def self.provision_and_bootstrap!(instance_name)
-      instance_id = provision(instance_name)
+      instance_id, instance_ip = provision(instance_name)
       bootstrap(instance_id)
 
-      instance_id
+      [instance_id, instance_ip]
     end
 
     def self.provision(name)
@@ -16,7 +16,7 @@ module Elzar
       conf['tags'] = {'Name' => name}
 
       slushy = Slushy::Instance.launch(fog_connection, conf)
-      slushy.instance_id
+      [slushy.instance_id, slushy.server.public_ip_address]
     end
 
     def self.bootstrap(instance_id)
@@ -25,8 +25,12 @@ module Elzar
       slushy.bootstrap
     end
 
-    def self.private_key
-      config['server']['private_key']
+    def self.converge!(instance_id)
+      tmpdir = Elzar.merge_and_create_temp_directory File.expand_path('provision/')
+      slushy = Slushy::Instance.new(fog_connection, instance_id)
+      slushy.converge tmpdir
+
+      [slushy.instance_id, slushy.server.public_ip_address]
     end
 
     private
@@ -38,6 +42,10 @@ module Elzar
 
     def self.fog_connection
       @fog_connection ||= Fog::Compute.new(config['aws_credentials'].merge(:provider => 'AWS'))
+    end
+
+    def self.private_key
+      config['server']['private_key']
     end
   end
 end
