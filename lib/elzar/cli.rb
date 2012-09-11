@@ -1,4 +1,5 @@
 require 'elzar'
+require 'elzar/ssh_key_locator'
 
 module Elzar
   module Cli
@@ -41,8 +42,8 @@ module Elzar
       end
 
       def find_ssh_keys
-        # TODO Replace with (tested) logic from ProvisionConfigGenerator
-        ['ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAvmJFEIEqQh/hOertDav1G44Sd24gBjyvi/u/idrrPO9uhZj4e+2Hcpkw5Z4Gmco36oD/ycX6r/fur9WJjpYTlQKzqTFMzYE55qN93sQirzNQ59kSa02Qj6DIMIKuK7QZ8h6Au+XcQpRr51ebXe2Qch3CFjb5bh08S8EaStuNM0iTUBMVrRHO/nlmbP7QDqCWy66iTDP0QU2YGYpriVwwg/bOI3RjQF9l0NpKSihYRpECo6qC3QTPIY0U+Vle+pREEjbHaZs9d6txCJWGJqprqW6FWfpr81yETHmI1TSIfZwnjh3bHGWgAEb8XNUfvOIcfgzroVOLcQYqpIdr+gaMdw== jason@jmac']
+        # TODO Enhance to use ssh agent keys if no local keys are found
+        Elzar::SshKeyLocator.find_local_keys
       end
     end
 
