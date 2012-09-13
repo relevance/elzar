@@ -57,6 +57,16 @@ $ vagrant suspend
 $ vagrant resume
 ```
 
+### CLI Development
+
+The CLI tool (bin/elzar) is built on top of [GLI](https://github.com/davetron5000/gli)
+which is a command line parser modelled after Git. Normally any
+exception that occurs while running a command results in only the error
+message being displayed, not the backtrace. If you would like to view
+the backtrace you must set the env variable `GLI_DEBUG=true`.
+
+    GLI_DEBUG=true bundle exec bin/elzar foo
+
 ## Issues
 
 Please file issues [on github](https://github.com/relevance/elzar/issues).
