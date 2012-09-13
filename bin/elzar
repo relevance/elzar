@@ -31,6 +31,11 @@ end
 desc 'Spins up a new EC2 instance ready for cooking'
 arg_name 'instance_name' # TODO raise error if arg not given
 command :preheat do |c|
+  c.flag :aws_config_dir,
+    :default_value => Elzar::AwsConfig::DEFAULT_CONFIG_DIR,
+    :arg_name => 'aws_config_dir',
+    :desc => "The directory containing your AWS config files"
+
   c.action do |global_options,options,args|
     instance_name = args.first
     Elzar::Cli::Preheat.run(instance_name, global_options.merge(options))
@@ -40,6 +45,11 @@ end
 desc 'Converges and runs recipes on given instance'
 arg_name 'instance_id' # TODO raise error if arg not given
 command :cook do |c|
+  c.flag :aws_config_dir,
+    :default_value => Elzar::AwsConfig::DEFAULT_CONFIG_DIR,
+    :arg_name => 'aws_config_dir',
+    :desc => "The directory containing your AWS config files"
+
   c.action do |global_options,options,args|
     instance_id = args.first
     Elzar::Cli::Cook.run(instance_id, global_options.merge(options))

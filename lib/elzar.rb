@@ -1,7 +1,10 @@
 require 'elzar/version'
 require 'elzar/template'
 require 'elzar/assistant'
+require 'elzar/aws_config'
 require 'elzar/compute'
+
+require 'elzar/core_ext/hash'
 
 module Elzar
   ROOT_DIR = File.expand_path File.dirname(__FILE__) + '/../'
