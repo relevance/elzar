@@ -3,10 +3,36 @@ require 'elzar/ssh_key_locator'
 
 module Elzar
   module Cli
+    class MissingArgumentsError < StandardError
+      def initialize(cmd, arguments)
+        super "Required arguments missing (#{arguments.join(', ')})." \
+          " Run `elzar help #{cmd}` for more information."
+      end
+    end
+
     class Runner
       def self.run(*args)
         runner = new(*args)
+        runner.require_arguments!
         runner.run
+      end
+
+      def self.required_argument(*arg_names)
+        @required_arguments ||= []
+        @required_arguments += arg_names
+      end
+
+      def self.required_arguments
+        @required_arguments || []
+      end
+
+      def require_arguments!
+        missing_arguments = self.class.required_arguments.select do |arg|
+          arg_value = self.instance_variable_get(:"@#{arg}")
+          arg_value.to_s.strip.empty?
+        end
+
+        raise MissingArgumentsError.new(cmd, missing_arguments) unless missing_arguments.empty?
       end
 
       private
@@ -21,8 +47,7 @@ module Elzar
       end
 
       def cmd
-        class_name = self.class.name.split('::').last
-        class_name.downcase
+        self.class.name.split('::').last.downcase
       end
 
 
@@ -60,6 +85,8 @@ module Elzar
     class Preheat < Runner
       attr_reader :instance_name
 
+      required_argument :instance_name
+
       def initialize(instance_name, options = {})
         @instance_name = instance_name
         @aws_config_dir = options[:aws_config_dir]
@@ -78,6 +105,8 @@ module Elzar
 
     class Cook < Runner
       attr_reader :instance_id
+
+      required_argument :instance_id
 
       def initialize(instance_id, options = {})
         @instance_id = instance_id
