@@ -6,18 +6,18 @@ describe Elzar::AwsConfig do
     <<-YAML
       server:
         creation_config:
-          :flavor_id: 'm1.large'
-          :image_id: "ami-fd589594"
-          :groups: default
-          :key_name: relevance_aws
+          flavor_id: 'm1.large'
+          image_id: "ami-fd589594"
+          groups: default
+          key_name: relevance_aws
     YAML
   end
 
   let(:private_aws_config) do
     <<-YAML
       aws_credentials:
-        :aws_access_key_id: AKIAIQZWXGD2S56W2MMQ
-        :aws_secret_access_key: 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
+        aws_access_key_id: AKIAIQZWXGD2S56W2MMQ
+        aws_secret_access_key: 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
 
       server:
         private_key: |
@@ -67,7 +67,7 @@ describe Elzar::AwsConfig do
       create_configs_at '/tmp/elzar'
       config = Elzar::AwsConfig.load_configs '/tmp/elzar'
 
-      config['server']['creation_config'][:flavor_id].should == 'm1.large'
+      config['server']['creation_config']['flavor_id'].should == 'm1.large'
       config['server']['private_key'].should match(/Secrets/)
     end
 

@@ -2,8 +2,8 @@
 #
 # Settings in this file override settings in aws_config.yml
 aws_credentials:
-  :aws_access_key_id: <your aws access key id>
-  :aws_secret_access_key: <your aws secret access key>
+  aws_access_key_id: <your aws access key id>
+  aws_secret_access_key: <your aws secret access key>
 
 server:
   private_key: |
