@@ -54,6 +54,7 @@ describe Elzar::AwsConfig do
 
       config = Elzar::AwsConfig.load_configs
       config['aws_credentials'].should_not be_nil
+      config['aws_credentials']['aws_access_key_id'].should == 'AKIAIQZWXGD2S56W2MMQ'
     end
 
     it 'tries to load config files in config_directory if specified' do
@@ -61,6 +62,7 @@ describe Elzar::AwsConfig do
 
       config = Elzar::AwsConfig.load_configs '/tmp/elzar-specified'
       config['aws_credentials'].should_not be_nil
+      config['aws_credentials']['aws_access_key_id'].should == 'AKIAIQZWXGD2S56W2MMQ'
     end
 
     it 'does a deep merge of the configuration files' do
