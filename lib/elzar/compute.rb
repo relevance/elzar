@@ -15,37 +15,33 @@ module Elzar
       config = aws_config['server']['creation_config']
       config['tags'] = {'Name' => name}
 
-      slushy = Slushy::Instance.launch(fog_connection(aws_config), config)
-      [slushy.instance_id, slushy.server.public_ip_address]
+      slushy_instance = Slushy::Instance.launch(fog_connection(aws_config), config)
+      [slushy_instance.instance_id, slushy_instance.server.public_ip_address]
     end
 
     def self.bootstrap(instance_id, aws_config)
-      slushy = Slushy::Instance.new(fog_connection(aws_config), instance_id)
-      slushy.server.private_key = private_key
-      slushy.bootstrap
+      slushy_instance = slushy_instance_for(instance_id, aws_config)
+      slushy_instance.bootstrap
     end
 
     def self.converge!(instance_id, aws_config)
       tmpdir = Elzar.merge_and_create_temp_directory File.expand_path('provision/')
-      slushy = Slushy::Instance.new(fog_connection(aws_config), instance_id)
-      slushy.converge tmpdir
+      slushy_instance = slushy_instance_for(instance_id, aws_config)
+      slushy_instance.converge tmpdir
 
-      [slushy.instance_id, slushy.server.public_ip_address]
+      [slushy_instance.instance_id, slushy_instance.server.public_ip_address]
     end
 
     private
-
-    def self.config
-      # TODO Allow users of this API to specify the location of the config file
-      @config ||= YAML.load File.read('provision/aws_config.yml')
-    end
 
     def self.fog_connection(aws_config)
       @fog_connection ||= Fog::Compute.new(aws_config['aws_credentials'].merge(:provider => 'AWS'))
     end
 
-    def self.private_key
-      config['server']['private_key']
+    def self.slushy_instance_for(instance_id, aws_config)
+      Slushy::Instance.new(fog_connection(aws_config), instance_id).tap do |s|
+        s.server.private_key = aws_config['server']['private_key']
+      end
     end
   end
 end
