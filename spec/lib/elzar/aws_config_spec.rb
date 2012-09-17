@@ -48,7 +48,7 @@ describe Elzar::AwsConfig do
       cleanup_configs '/tmp/elzar-specified'
     end
 
-    it 'trys to load config files in the DEFAULT_CONFIG_DIR if no config_directory specified' do
+    it 'tries to load config files in the DEFAULT_CONFIG_DIR if no config_directory specified' do
       stub_const 'Elzar::AwsConfig::DEFAULT_CONFIG_DIR', '/tmp/elzar'
       create_configs_at '/tmp/elzar'
 
@@ -56,7 +56,7 @@ describe Elzar::AwsConfig do
       config['aws_credentials'].should_not be_nil
     end
 
-    it 'trys to load config files in config_directory if specified' do
+    it 'tries to load config files in config_directory if specified' do
       create_configs_at '/tmp/elzar-specified'
 
       config = Elzar::AwsConfig.load_configs '/tmp/elzar-specified'
