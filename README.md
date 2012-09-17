@@ -18,6 +18,25 @@ dir = Elzar.merge_and_create_temp_directory 'provision'
 # You now have a directory you can put on a chef node
 ```
 
+## CLI Usage
+
+### Set up a provision directory in your project
+
+    $ cd $PROJECT_ROOT
+    $ elzar init
+    $ vim provision/dna.json # Edit config to reflect your needs
+
+### Spin up a new EC2 
+
+    $ cd $PROJECT_ROOT
+    $ elzar preheat "My Instance Name"
+    > Instance Id: instancexyz
+
+### Run Chef recipes on a target EC2 instance
+
+    $ cd $PROJECT_ROOT
+    $ elzar cook instancexyz
+
 ## Local Development
 
 If you'd like to try these Chef cookbooks with Vagrant:
