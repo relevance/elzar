@@ -168,7 +168,8 @@ capify .
 
 Unfortunately, the default Capistrano configs won't get us very far at
 all. We'll need to pull in some pretty generic configuration that we use
-on most of our applications. See [this commit](https://github.com/relevance/elzar_rails_example/commit/d9e205f80991f07222b86705c4598b01660ebcb9)
+on most of our applications. See [this
+commit](https://github.com/relevance/elzar_rails_example/compare/after_capistrano_defaults...after_capistrano_customizations)
 for an example of the boilerplate configuration we'll need to get up and
 running.
     
