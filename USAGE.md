@@ -215,8 +215,9 @@ vim /var/www/apps/elzar_rails_example/shared/config/database.yml
 ```
 
 Your `database.yml` file should look similar to this one, obviously
-edited to meet your applications needs. Be sure you configure `database`
-to match the one created by Chef (i.e. `#{rails_app[name]}_production`).
+edited to meet your application's needs. Be sure you configure the value
+of `database` to match the one created by Chef (i.e.
+`#{rails_app[name]}_production`).
 
 ```yaml
 production:
@@ -231,7 +232,7 @@ production:
 
 ### Step 8: Serve It Up
 
-Here comes the exiting part. It's time to deploy our Rails app to the
+Here comes the exciting part. It's time to deploy our Rails app to the
 box. Since this is the first time we've ever deployed to the box we'll
 need to run a special Capistrano command that does slightly more work
 than a bare deploy.
