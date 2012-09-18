@@ -4,7 +4,7 @@ Elzar Usage
 ## Rails Tutorial
 
 This example assumes that you have a working Rails application that is
-compatible with the default [Rails DNA](relevance/elzar/tree/master/lib/elzar/templates/dna/rails.json)
+compatible with the default [Rails DNA](/relevance/elzar/tree/master/lib/elzar/templates/dna/rails.json)
 included in Elzar.
 
 
