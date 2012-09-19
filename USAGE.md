@@ -34,16 +34,15 @@ The previous command created a `dna.json` template at
 
 ```javascript
 {
-  "run_list":["role[plumbing]", "mysql::server", "role[enterprise_appstack]", "rails_app"],
-  "mysql": {"server_root_password": ""},
+  "run_list":["role[plumbing]", "role[postgres_database]", "ruby", "passenger", "rails_app"],
   "passenger":  {
     "version":  "3.0.11",
     "root_path":  "/opt/relevance-ruby/lib/ruby/gems/1.9.1/gems/passenger-3.0.11",
     "module_path":  "/opt/relevance-ruby/lib/ruby/gems/1.9.1/gems/passenger-3.0.11/ext/apache2/mod_passenger.so"
   },
   "ruby":  {
-    "version":  "1.9.3-p125",
-    "url":  "http://ftp.ruby-lang.org/pub/ruby/1.9/ruby-1.9.3-p125.tar.gz"
+    "version":  "1.9.3-p194",
+    "url":  "http://ftp.ruby-lang.org/pub/ruby/1.9/ruby-1.9.3-p194.tar.gz"
   },
   "rails_app":  {
     "name":  "TODO: Replace with the name of your Rails app"
@@ -222,13 +221,12 @@ of `database` to match the one created by Chef (i.e.
 
 ```yaml
 production:
-  adapter: mysql2
-  encoding: utf8
-  reconnect: false
+  adapter: postgresql
+  encoding: unicode
   database: elzar_rails_example_production
   pool: 5
-  username: root
-  password:
+  username: deploy
+  password: d3pl0y-p0stgr3s
 ```
 
 ### Step 8: Serve It Up
