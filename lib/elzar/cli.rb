@@ -96,7 +96,7 @@ module Elzar
         notify "Provisioning an instance..."
         instance_id, instance_ip = Elzar::Compute.provision_and_bootstrap!(instance_name, aws_config)
         notify <<-MSG
-          Finished Provisioning Server
+          Finished provisioning server
             Instance ID: #{instance_id}
             Instance IP: #{instance_ip}
         MSG
@@ -117,7 +117,7 @@ module Elzar
         notify "Cooking..."
         inst_id, inst_ip = Elzar::Compute.converge!(instance_id, aws_config)
         notify <<-MSG
-          Finished Provisioning Server
+          Finished cooking
             Instance ID: #{inst_id}
             Instance IP: #{inst_ip}
         MSG
