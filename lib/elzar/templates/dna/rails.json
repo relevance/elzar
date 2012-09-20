@@ -1,5 +1,5 @@
 {
-  "run_list":["role[plumbing]", "role[postgres_database]", "ruby", "passenger", "rails_app"],
+  "run_list":["role[plumbing]", "role[postgres_database]", "ruby", "passenger", "rails_app", "ruby::path"],
   "passenger":  {
     "version":  "3.0.11",
     "root_path":  "/opt/relevance-ruby/lib/ruby/gems/1.9.1/gems/passenger-3.0.11",
