@@ -7,6 +7,9 @@ This example assumes that you have a working Rails application that is
 compatible with the default [Rails DNA](/relevance/elzar/tree/master/lib/elzar/templates/dna/rails.json)
 included in Elzar.
 
+All commands assume your RAILS_ROOT is your current working directory.
+
+It's worth noting that a new EC2 instance is provisioned each time this script is executed; you'll probably want to clean those up if you need to re-start for any reason.
 
 ### Step 0: Install Elzar
 
@@ -73,6 +76,8 @@ The `rails_app[name]` in `dna.json` has several implicit effects:
 * It determines the path of your nginx configuration file (e.g.,
   `/etc/nginx/sites-enabled/elzar_rails_example`)
 
+You'll want to consider how your choice of rails_app name will operate in these contexts; for example, whether your database engine allows dashes in its database names.
+
 
 ### Step 3: Configure AWS Settings
 
@@ -128,7 +133,7 @@ of "ElzarRailsExample Staging". This is the name that you will see when browsing
 instances in the AWS console. Name your instance accordingly.
 
 If this step completes successfully, it will display the ID of the
-instance as well as its public IP address. For example:
+instance, which you'll use in the next step, as well as its public IP address. For example:
 
 ```
 Finished Provisioning Server
@@ -146,11 +151,8 @@ combined payload will be uploaded to the server and placed in
 
 
 ```sh
-elzar cook i-abcdef01
+elzar cook [YOUR-INSTANCE-ID]
 ```
-
-When running this command be sure to use the instance ID returned to you
-from the `preheat` command.
 
 
 ### Step 6: Configure Capistrano
@@ -182,7 +184,7 @@ role :db,  "your primary db-server here", :primary => true # This is where Rails
 role :db,  "your slave db-server here"
 ```
 
-Using the IP address that we got from running `elzar preheat` earlier,
+Using the IP address that we got from previous elzar commands,
 our config would look like this:
 
 ```ruby
@@ -215,19 +217,19 @@ vim /var/www/apps/elzar_rails_example/shared/config/database.yml
 ```
 
 Your `database.yml` file should look similar to this one, obviously
-edited to meet your application's needs. Be sure you configure the value
-of `database` to match the one created by Chef (i.e.
-`#{rails_app[name]}_production`).
+edited to meet your application's needs. 
 
 ```yaml
 production:
   adapter: postgresql
   encoding: unicode
-  database: elzar_rails_example_production
+  database: [YOUR-APP-NAME]_production
   pool: 5
   username: deploy
   password: d3pl0y-p0stgr3s
 ```
+
+If you chose to SSH into the instance to set up database.yml, be sure continue from the RAILS_ROOT on the local machine.
 
 ### Step 8: Serve It Up
 
