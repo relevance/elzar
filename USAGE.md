@@ -95,7 +95,7 @@ These files look like so:
 server:
   creation_config:
     :flavor_id: <instance type, e.g. 'm1.large'>
-    :image_id: <ami to bootstrap with. Must be some UBUNTU image. e.g. "ami-fd589594">
+    :image_id: <AMI to bootstrap with; must be some Ubuntu server image; e.g., "ami-fd589594" for Ubuntu 11.04>
     :groups: <security group to place the new deployment in, e.g. "default">
     :key_name: <name of the public/private keypair to start instance with>
 
