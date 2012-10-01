@@ -56,6 +56,20 @@ command :cook do |c|
   end
 end
 
+desc 'Destroys the given EC2 instance'
+arg_name 'instance_id' # TODO raise error if arg not given
+command :destroy do |c|
+  c.flag :aws_config_dir,
+    :default_value => Elzar::AwsConfig::DEFAULT_CONFIG_DIR,
+    :arg_name => 'aws_config_dir',
+    :desc => "The directory containing your AWS config files"
+
+  c.action do |global_options,options,args|
+    instance_id = args.first
+    Elzar::Cli::Destroy.run(instance_id, global_options.merge(options))
+  end
+end
+
 pre do |global,command,options,args|
   # Pre logic here
   # Return true to proceed; false to abourt and not call the

@@ -32,6 +32,11 @@ module Elzar
       [slushy_instance.instance_id, slushy_instance.server.public_ip_address]
     end
 
+    def self.destroy!(instance_id, aws_config)
+      slushy_instance = slushy_instance_for(instance_id, aws_config)
+      slushy_instance.terminate
+    end
+
     private
 
     def self.fog_connection(aws_config)

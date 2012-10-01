@@ -123,5 +123,21 @@ module Elzar
         MSG
       end
     end
+
+    class Destroy < Runner
+      attr_reader :instance_id
+
+      required_argument :instance_id
+
+      def initialize(instance_id, options = {})
+        @instance_id = instance_id
+        @aws_config_dir = options[:aws_config_dir]
+      end
+
+      def run
+        Elzar::Compute.destroy!(instance_id, aws_config)
+        notify "Destroyed instance #{instance_id}"
+      end
+    end
   end
 end
