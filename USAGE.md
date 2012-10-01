@@ -7,9 +7,7 @@ This example assumes that you have a working Rails application that is
 compatible with the default [Rails DNA](/relevance/elzar/tree/master/lib/elzar/templates/dna/rails.json)
 included in Elzar.
 
-All commands assume your RAILS_ROOT is your current working directory.
-
-It's worth noting that a new EC2 instance is provisioned each time this script is executed; you'll probably want to clean those up if you need to re-start for any reason.
+All commands assume your `RAILS_ROOT` is your current working directory.
 
 ### Step 0: Install Elzar
 
@@ -76,7 +74,9 @@ The `rails_app[name]` in `dna.json` has several implicit effects:
 * It determines the path of your nginx configuration file (e.g.,
   `/etc/nginx/sites-enabled/elzar_rails_example`)
 
-You'll want to consider how your choice of rails_app name will operate in these contexts; for example, whether your database engine allows dashes in its database names.
+You'll want to consider how your choice of `rails_app` name will operate
+in these contexts (e.g.,  whether your database engine allows
+dashes in its database names).
 
 
 ### Step 3: Configure AWS Settings
@@ -111,7 +111,7 @@ server:
     by server[:creation_config][:key_name] in aws_config.yml.
     -----END RSA PRIVATE KEY-----
 ```
-    
+
 Elzar will load both of these files and perform a deep merge on them.
 Any settings in `aws_config.private.yml` will override settings found in
 `aws_config.yml`.
@@ -123,6 +123,10 @@ Edit these files as appropriate for your project.
 
 This step will provision a new server from AWS using your specified
 credentials and will bootstrap Chef Solo on the box.
+
+Note: **A *new* EC2 instance is provisioned each time this script is
+executed**; you'll probably want to clean up those instances if you need
+to re-start for any reason.
 
 ```sh
 elzar preheat "ElzarRailsExample Staging"
@@ -173,7 +177,7 @@ on most of our applications. See [this
 commit](https://github.com/relevance/elzar_rails_example/compare/after_capistrano_defaults...after_capistrano_customizations)
 for an example of the boilerplate configuration we'll need to get up and
 running.
-    
+
 Next, we need to specify the IP address of the server we just set up in
 `config/deploy.rb`. By default the config looks something like this:
 
@@ -196,6 +200,7 @@ role :db,  "42.42.000.42", :primary => true # This is where Rails migrations wil
 Notice that we deleted the configuration for the slave DB server since we do
 not have one at this time.
 
+
 ### Step 7: Prepare to Serve
 
 Now that we have a working Capistrano configuration we just need to make
@@ -217,7 +222,7 @@ vim /var/www/apps/elzar_rails_example/shared/config/database.yml
 ```
 
 Your `database.yml` file should look similar to this one, obviously
-edited to meet your application's needs. 
+edited to meet your application's needs.
 
 ```yaml
 production:
@@ -229,7 +234,6 @@ production:
   password: d3pl0y-p0stgr3s
 ```
 
-If you chose to SSH into the instance to set up database.yml, be sure continue from the RAILS_ROOT on the local machine.
 
 ### Step 8: Serve It Up
 
@@ -239,6 +243,7 @@ need to run a special Capistrano command that does slightly more work
 than a bare deploy.
 
 ```sh
+# execute from RAILS_ROOT on your localhost
 cap deploy:cold
 ```
 
