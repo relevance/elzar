@@ -20,7 +20,7 @@ command :init do |c|
   c.flag :dna,
     :default_value => 'rails',
     :arg_name => 'dna',
-    :must_match => %w[clojure rails], # TODO Dynamically determine the list of available DNAs
+    :must_match => %w[rails], # TODO Dynamically determine the list of available DNAs (e.g., clojure, etc.)
     :desc => 'The application stack you wish to deploy'
 
   c.action do |global_options,options,args|
