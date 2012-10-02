@@ -1,3 +1,9 @@
+## 0.2.0
+* Drop support for relevance_rails
+* Update DNA to be opinionated, to support Ruby 1.9.3
+  (as opposed to REE) and Postgres (as opposed to MySQL)
+* Update CLI commands and options. (See USAGE.md.)
+
 ## 0.1.0
 * Initial working version for relevance_rails
 
