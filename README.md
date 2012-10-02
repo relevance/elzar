@@ -1,41 +1,11 @@
 ## Description
+
 This gem enables a Rails app to define custom Chef recipes while still using an awesome default set
-of Chef recipes. Best used in conjunction with relevance\_rails and slushy. Includes recipes for
-ruby 1.9, ree, mysql, postgresql and nginx/passenger.
+of Chef recipes. Includes recipes for Ruby 1.9, postgresql, and nginx/passenger.
 
 ## Usage
 
-To use Elzar with your Rails app, just use (relevance_rails)[https://github.com/relevance/relevance_rails].
-
-But if you'd like to manually do it:
-
-```ruby
-# Creates a provision/ directory to define app-specific cookbooks
-Elzar.create_provision_directory 'provision'
-
-# To combine Elzar's cookbooks with your app's cookbooks
-dir = Elzar.merge_and_create_temp_directory 'provision'
-# You now have a directory you can put on a chef node
-```
-
-## CLI Usage
-
-### Set up a provision directory in your project
-
-    $ cd $PROJECT_ROOT
-    $ elzar init
-    $ vim provision/dna.json # Edit config to reflect your needs
-
-### Spin up a new EC2 
-
-    $ cd $PROJECT_ROOT
-    $ elzar preheat "My Instance Name"
-    > Instance Id: instancexyz
-
-### Run Chef recipes on a target EC2 instance
-
-    $ cd $PROJECT_ROOT
-    $ elzar cook instancexyz
+To use Elzar with your Rails app, see [USAGE.md](https://github.com/relevance/elzar/blob/master/USAGE.md).
 
 ## Local Development
 
@@ -45,7 +15,7 @@ If you'd like to try these Chef cookbooks with Vagrant:
 $ git clone git@github.com:relevance/elzar.git
 $ cd elzar
 $ gem install bundler
-# creates provision/ for local vagrant use
+# creates a `provision` directory for local vagrant use
 $ rake bam
 $ cd provision
 $ bundle install
@@ -59,7 +29,7 @@ your bundle and grab the Ubuntu Lucid VM image.
     vagrant box add lucid64 http://files.vagrantup.com/lucid64.box
 
 ```sh
-## Spin up a new VM
+## Spin up a new VM and run the Chef recipes on it
 $ vagrant up
 
 ## SSH into the VM
@@ -88,4 +58,4 @@ the backtrace you must set the env variable `GLI_DEBUG=true`.
 
 ## Issues
 
-Please file issues [on github](https://github.com/relevance/elzar/issues).
+Please file issues [on GitHub](https://github.com/relevance/elzar/issues).
