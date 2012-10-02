@@ -5,8 +5,8 @@ group "development" do
   gem "json",                   "1.5.2"
 
   gem "elzar"
-  gem "vagrant",                "0.8.7"
-  gem "chef",                   "0.10.8"
-  gem "knife-solo",             "0.0.4"
-  gem "knife-github-cookbooks", :git => "git://github.com/sumbach/knife-github-cookbooks.git"
+  gem "vagrant",                "1.0.5"
+  gem "chef",                   "10.14.4"
+  gem "knife-solo",             "0.0.14"
+  gem "knife-github-cookbooks", "~> 0.1.7"
 end
