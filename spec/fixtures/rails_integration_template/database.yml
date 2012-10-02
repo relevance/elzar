@@ -1,0 +1,7 @@
+production:
+  adapter: postgresql
+  encoding: unicode
+  database: elzar_nightly_app_production
+  pool: 5
+  username: deploy
+  password: d3pl0y-p0stgr3s
