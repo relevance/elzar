@@ -15,9 +15,12 @@ If you'd like to try these Chef cookbooks with Vagrant:
 $ git clone git@github.com:relevance/elzar.git
 $ cd elzar
 $ gem install bundler
+
 # creates a `provision` directory for local vagrant use
 $ rake bam
+
 $ cd provision
+$ vim dna.json # edit DNA file to give a name to your Rails app with no whitespace (e.g., "my_sample_app")
 $ bundle install
 
 ## Using Vagrant
