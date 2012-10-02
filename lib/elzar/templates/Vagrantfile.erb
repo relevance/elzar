@@ -5,7 +5,7 @@ Vagrant::Config.run do |config|
   config.vm.box       = "lucid64"
   config.vm.box_url   = "http://files.vagrantup.com/lucid64.box"
   config.vm.host_name = <%= @vm_host_name.inspect %>
-  config.vm.network     "172.25.5.5"
+  config.vm.network     :hostonly, "172.25.5.5"
   config.vm.provision :shell, :path => "upgrade-chef.sh"
   config.vm.provision :chef_solo do |chef|
     chef.cookbooks_path = <%= @cookbooks_path.inspect %>
