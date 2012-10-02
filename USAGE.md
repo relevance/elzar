@@ -217,8 +217,9 @@ for a sample diff.
 ```sh
 cap deploy:setup
 ssh deploy@42.42.000.42
-mkdir /var/www/apps/elzar_rails_example/shared/config
-vim /var/www/apps/elzar_rails_example/shared/config/database.yml
+mkdir /var/www/apps/[YOUR-APP-NAME]/shared/config
+vim /var/www/apps/[YOUR-APP-NAME]/shared/config/database.yml
+exit # Log out of the target server when finished.
 ```
 
 Your `database.yml` file should look similar to this one, obviously
