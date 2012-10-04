@@ -1,7 +1,10 @@
 TemplateRoot = File.expand_path '..', __FILE__
 
-gem 'capistrano', :group => 'development'
+gem 'capistrano', :group => 'deployment', :git => 'git://github.com/capistrano/capistrano', :ref => 'b31e2f5'
+gem 'capistrano-relevance', :group => 'deployment'
+
 gem 'therubyracer', :group => 'assets', :platforms => :ruby
+
 run 'bundle install'
 run 'bundle exec capify .'
 
