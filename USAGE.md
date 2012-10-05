@@ -94,15 +94,16 @@ These files look like so:
 # aws_config.yml
 server:
   creation_config:
-    :flavor_id: <instance type, e.g. 'm1.large'>
-    :image_id: <AMI to bootstrap with; must be some Ubuntu server image; e.g., "ami-fd589594" for Ubuntu 11.04>
-    :groups: <security group to place the new deployment in, e.g. "default">
-    :key_name: <name of the public/private keypair to start instance with>
+    flavor_id: <instance type, e.g. 'm1.large'>
+    image_id: <AMI to bootstrap with; must be some Ubuntu server image; e.g., "ami-fd589594" for Ubuntu 11.04>
+    groups: <security group to place the new deployment in, e.g. "default">
+    key_name: <name of the public/private keypair to start instance with>
+
 
 # aws_config.private.yml
 aws_credentials:
-  :aws_access_key_id: <your aws access key id>
-  :aws_secret_access_key: <your aws secret access key>
+  aws_access_key_id: <your aws access key id>
+  aws_secret_access_key: <your aws secret access key>
 
 server:
   private_key: |
