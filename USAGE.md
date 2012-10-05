@@ -98,8 +98,9 @@ server:
     image_id: <AMI to bootstrap with; must be some Ubuntu server image; e.g., "ami-fd589594" for Ubuntu 11.04>
     groups: <security group to place the new deployment in, e.g. "default">
     key_name: <name of the public/private keypair to start instance with>
+```
 
-
+```yaml
 # aws_config.private.yml
 aws_credentials:
   aws_access_key_id: <your aws access key id>
@@ -165,66 +166,65 @@ elzar cook [YOUR-INSTANCE-ID]
 At this point in time, we have a server that is ready to run our app.
 Now, we just need to get our app up there.
 
-First off, we need to add Capistrano to your Rails app.
+First off, we need to add Capistrano and [capistrano-relevance](https://github.com/relevance/capistrano-relevance) to our Rails app.
+To do so, add these lines to the `Gemfile` in the Rails application:
+
+```ruby
+group :deployment do
+  gem 'capistrano', :git => 'git://github.com/capistrano/capistrano', :ref => 'b31e2f5'
+  gem 'capistrano-relevance'
+end
+```
+
+And then execute:
 
 ```sh
-gem install capistrano
-capify .
+bundle
+bundle exec capify .
 ```
 
-Unfortunately, the default Capistrano configs won't get us very far at
-all. We'll need to pull in some pretty generic configuration that we use
-on most of our applications. See [this
-commit](https://github.com/relevance/elzar_rails_example/compare/after_capistrano_defaults...after_capistrano_customizations)
-for an example of the boilerplate configuration we'll need to get up and
-running.
+Next, we need to customize `config/deploy.rb` for our app.
+(For the purposes of this tutorial, we'll assume that we want the default capistrano-relevance configuration. For alternative setups, and for more information on capistrano-relevance, check out its [README](https://github.com/relevance/capistrano-relevance/blob/master/README.md).)
 
-Next, we need to specify the IP address of the server we just set up in
-`config/deploy.rb`. By default the config looks something like this:
+*Replace* the existing contents of `config/deploy.rb` with a structure like so:
 
 ```ruby
-role :web, "your web-server here"                          # Your HTTP server, Apache/etc
-role :app, "your app-server here"                          # This may be the same as your `Web` server
-role :db,  "your primary db-server here", :primary => true # This is where Rails migrations will run
-role :db,  "your slave db-server here"
+require 'bundler/capistrano'
+require 'capistrano/relevance/all'
+
+set :application, "elzar_rails_example"                      # TODO Replace with *your* app name
+set :repository,  "git://github.com/you/elzar_rails_example" # TODO Replace with *your* repo
+
+role :web, "42.42.000.42"                                    # TODO Replace with the IP address for *your* EC2 instance
+role :app, "42.42.000.42"                                    # TODO Replace with the IP address for *your* EC2 instance
+role :db,  "42.42.000.42", :primary => true                  # TODO Replace with the IP address for *your* EC2 instance
 ```
-
-Using the IP address that we got from previous elzar commands,
-our config would look like this:
-
-```ruby
-role :web, "42.42.000.42"                   # Your HTTP server, Apache/etc
-role :app, "42.42.000.42"                   # This may be the same as your `Web` server
-role :db,  "42.42.000.42", :primary => true # This is where Rails migrations will run
-```
-
-Notice that we deleted the configuration for the slave DB server since we do
-not have one at this time.
 
 
 ### Step 7: Prepare to Serve
 
-Now that we have a working Capistrano configuration we just need to make
-a couple of other small tweaks to make the box deployable. Specifically,
-we need to create the directory structure that Capistrano expects and
-place our database configuration on the box.
+Now that we have a working Capistrano configuration we just need to make a couple of other small tweaks to make the box deployable.
+Specifically, we need to create the directory structure that Capistrano expects and place our database configuration on the box.
 
-It is considered a best practice to not check in any actual database
-credential into your Git repo. Alternatively, you check in a
-`database.example.yml` file and then manually manage a `database.yml`
-file on your target server. See [this example](https://github.com/relevance/elzar_rails_example/commit/3763bba70fd50e2bb04f28cf35412ed208b25852)
-for a sample diff.
+Best practices (TM) discourage us from checking in any database credentials into our Git repo.
+Instead, we can create a `database.yml` file on the server.
 
 ```sh
-cap deploy:setup
+bundle exec cap deploy:setup
+
 ssh deploy@42.42.000.42
+
+# Create the the directory where you will store your shared configuration.
 mkdir /var/www/apps/[YOUR-APP-NAME]/shared/config
+
+# Add production settings for the database
 vim /var/www/apps/[YOUR-APP-NAME]/shared/config/database.yml
-exit # Log out of the target server when finished.
+
+# We're done messing around on the server; let's get outta here
+exit
 ```
 
-Your `database.yml` file should look similar to this one, obviously
-edited to meet your application's needs.
+Your `database.yml` file should look similar to this one, obviously edited to meet your application's needs.
 
 ```yaml
 production:
@@ -239,21 +239,19 @@ production:
 
 ### Step 8: Serve It Up
 
-Here comes the exciting part. It's time to deploy our Rails app to the
-box. Since this is the first time we've ever deployed to the box we'll
-need to run a special Capistrano command that does slightly more work
-than a bare deploy.
+Here comes the exciting part.
+It's time to deploy our Rails app to the box.
+Since this is the first time we've ever deployed to the box we'll need to run a special Capistrano command that does slightly more work than a bare deploy.
 
 ```sh
 # execute from RAILS_ROOT on your localhost
-cap deploy:cold
+bundle exec cap deploy:cold
 ```
 
-Congratulations! You should be able to visit the IP address using your
-favorite browser and see the application up and running.
+Congratulations! You should be able to visit the IP address using your favorite browser and see the application up and running.
 
-For subsequent deploys you should just be able to simply run:
+For subsequent deploys, you can simply run:
 
 ```sh
-cap deploy
+bundle exec cap deploy
 ```
